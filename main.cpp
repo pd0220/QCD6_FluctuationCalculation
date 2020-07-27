@@ -1,6 +1,24 @@
+// including used header
 #include "AnalysisTools.hh"
 
-int main(int, char **)
+// ------------------------------------------------------------------------------------------------------------
+
+// main function
+// argv[1] --> name of given file with dataset
+//
+//
+int main(int argc, char **argv)
 {
-    std::cout << "Hello, world!\n";
+    // check argument list
+    if (argc < 2)
+    {
+        std::cout << "ERROR\nNot enough arguments given." << std::endl;
+        std::exit(-1);
+    }
+
+    // prepare for reading given file
+    // string for file name
+    std::string fileName = argv[1];
+    // matrix container for raw data for analysis
+    Eigen::MatrixXd rawDataMat = ReadFile(fileName);
 }
