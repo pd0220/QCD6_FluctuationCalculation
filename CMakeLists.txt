@@ -6,11 +6,11 @@ enable_testing()
 
 find_package(Eigen3 REQUIRED)
 MESSAGE( [Main] " EIGEN3_INCLUDE_DIRS = ${EIGEN3_INCLUDE_DIRS}") 
-# EIGEN3_INCLUDE_DIRS = /usr/include/eigen3
+#EIGEN3_INCLUDE_DIRS = /usr/include/eigen3
 
 include_directories(${EIGEN3_INCLUDE_DIRS})
 
-# SET(CMAKE_CXX_FLAGS "-lgsl -lgslcblas -lm -O3")
+#SET(CMAKE_CXX_FLAGS "-lgsl -lgslcblas -lm -O3")
 
 find_package(GSL REQUIRED)
 link_libraries(GSL::gsl GSL::gslcblas)
@@ -18,8 +18,6 @@ link_libraries(GSL::gsl GSL::gslcblas)
 if (MSVC)
   string(REGEX REPLACE "/W[0-9]" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
 endif (MSVC)
-
-# list(APPEND CMAKE_PREFIX_PATH /home/pesznyak/GSL)
 
 add_executable(Fluctuations main.cpp)
 
