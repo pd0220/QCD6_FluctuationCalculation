@@ -77,3 +77,42 @@ Eigen::MatrixXd ReadFile(std::string const &fileName)
     // return raw data matrix
     return rawDataMat;
 }
+
+//
+//
+// CALCULATING SUSCEPTIBILITIES (with jackknife samples --> vector form)
+//
+//
+
+// imZB
+auto imZBCalc = [&](Eigen::VectorXd const &imZu, Eigen::VectorXd const &imZs) {
+    return (2 * imZu + imZs) / 3;
+};
+
+// ------------------------------------------------------------------------------------------------------------
+
+// ZBB
+auto ZBBCalc = [&](Eigen::VectorXd const &Zuu, Eigen::VectorXd const &Zss, Eigen::VectorXd const &Zus, Eigen::VectorXd const &Zud) {
+    return (2 * Zuu + Zss + 4 * Zus + 2 * Zud) / 9;
+};
+
+// ------------------------------------------------------------------------------------------------------------
+
+// general jackknife error calculator for susceptibilities
+auto ZError = [&](Eigen::VectorXd const &Z) {
+    // number of jackknife samples
+    int N = Z.size() - 2;
+    // pre-factor
+    double preFactor = (double)(N - 1) / N;
+    // estimator / mean
+    double estimator = Z.segment(2, N).mean();
+    // calculate variance
+    double var = 0.;
+    for (int i = 0; i < N; i++)
+    {
+        double val = Z(i + 2) - estimator;
+        var += val * val;
+    }
+    // return error (square root of variance)
+    return std::sqrt(preFactor * var);
+};
