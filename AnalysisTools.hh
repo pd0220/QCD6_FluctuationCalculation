@@ -91,9 +91,58 @@ auto imZBCalc = [&](Eigen::VectorXd const &imZu, Eigen::VectorXd const &imZs) {
 
 // ------------------------------------------------------------------------------------------------------------
 
+// imZQ
+auto imZQCalc = [&](Eigen::VectorXd const &imZu, Eigen::VectorXd const &imZs) {
+    return (imZu - imZs) / 3;
+};
+
+// ------------------------------------------------------------------------------------------------------------
+
+// imZS
+auto imZSCalc = [&](Eigen::VectorXd const &imZs) {
+    return -imZs;
+};
+
+// ------------------------------------------------------------------------------------------------------------
+
 // ZBB
 auto ZBBCalc = [&](Eigen::VectorXd const &Zuu, Eigen::VectorXd const &Zss, Eigen::VectorXd const &Zus, Eigen::VectorXd const &Zud) {
     return (2 * Zuu + Zss + 4 * Zus + 2 * Zud) / 9;
+};
+
+// ------------------------------------------------------------------------------------------------------------
+
+// ZQQ
+auto ZQQCalc = [&](Eigen::VectorXd const &Zuu, Eigen::VectorXd const &Zss, Eigen::VectorXd const &Zus, Eigen::VectorXd const &Zud) {
+    return (5 * Zuu + Zss - 2 * Zus - 4 * Zud) / 9;
+};
+
+// ------------------------------------------------------------------------------------------------------------
+
+// ZII
+auto ZIIQCalc = [&](Eigen::VectorXd const &Zuu, Eigen::VectorXd const &Zud) {
+    return (Zuu - Zud) / 2;
+};
+
+// ------------------------------------------------------------------------------------------------------------
+
+// ZBQ
+auto ZQBCalc = [&](Eigen::VectorXd const &Zuu, Eigen::VectorXd const &Zss, Eigen::VectorXd const &Zus, Eigen::VectorXd const &Zud) {
+    return (Zuu - Zss - Zus + Zud) / 9;
+};
+
+// ------------------------------------------------------------------------------------------------------------
+
+// ZBS
+auto ZBSCalc = [&](Eigen::VectorXd const &Zss, Eigen::VectorXd const &Zus) {
+    return -(Zss + 2 * Zus) / 3;
+};
+
+// ------------------------------------------------------------------------------------------------------------
+
+// ZQS
+auto ZQSCalc = [&](Eigen::VectorXd const &Zss, Eigen::VectorXd const &Zus) {
+    return (Zss - Zus) / 3;
 };
 
 // ------------------------------------------------------------------------------------------------------------
