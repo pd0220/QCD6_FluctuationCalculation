@@ -81,68 +81,82 @@ Eigen::MatrixXd ReadFile(std::string const &fileName)
 //
 //
 // CALCULATING SUSCEPTIBILITIES (with jackknife samples --> vector form)
+// labeling
+// imZu --> ZContainer[0];
+// imZs --> ZContainer[1];
+// Zuu  --> ZContainer[2];
+// Zud  --> ZContainer[3];
+// Zus  --> ZContainer[4];
+// Zss  --> ZContainer[5];
 //
 //
 
 // imZB
-auto imZBCalc = [&](Eigen::VectorXd const &imZu, Eigen::VectorXd const &imZs) {
-    return (2 * imZu + imZs) / 3;
+auto imZBCalc = [&](std::vector<Eigen::VectorXd> const &Z) {
+    return (2 * Z[0] + Z[1]) / 3;
 };
 
 // ------------------------------------------------------------------------------------------------------------
 
 // imZQ
-auto imZQCalc = [&](Eigen::VectorXd const &imZu, Eigen::VectorXd const &imZs) {
-    return (imZu - imZs) / 3;
+auto imZQCalc = [&](std::vector<Eigen::VectorXd> const &Z) {
+    return (Z[0] - Z[1]) / 3;
 };
 
 // ------------------------------------------------------------------------------------------------------------
 
 // imZS
-auto imZSCalc = [&](Eigen::VectorXd const &imZs) {
-    return -imZs;
+auto imZSCalc = [&](std::vector<Eigen::VectorXd> const &Z) {
+    return -Z[1];
 };
 
 // ------------------------------------------------------------------------------------------------------------
 
 // ZBB
-auto ZBBCalc = [&](Eigen::VectorXd const &Zuu, Eigen::VectorXd const &Zss, Eigen::VectorXd const &Zus, Eigen::VectorXd const &Zud) {
-    return (2 * Zuu + Zss + 4 * Zus + 2 * Zud) / 9;
+auto ZBBCalc = [&](std::vector<Eigen::VectorXd> const &Z) {
+    return (2 * Z[2] + Z[5] + 4 * Z[4] + 2 * Z[3]) / 9;
 };
 
 // ------------------------------------------------------------------------------------------------------------
 
 // ZQQ
-auto ZQQCalc = [&](Eigen::VectorXd const &Zuu, Eigen::VectorXd const &Zss, Eigen::VectorXd const &Zus, Eigen::VectorXd const &Zud) {
-    return (5 * Zuu + Zss - 2 * Zus - 4 * Zud) / 9;
+auto ZQQCalc = [&](std::vector<Eigen::VectorXd> const &Z) {
+    return (5 * Z[2] + Z[5] - 2 * Z[4] - 4 * Z[3]) / 9;
+};
+
+// ------------------------------------------------------------------------------------------------------------
+
+// ZSS
+auto ZSSCalc = [&](std::vector<Eigen::VectorXd> const &Z) {
+    return Z[5];
 };
 
 // ------------------------------------------------------------------------------------------------------------
 
 // ZII
-auto ZIIQCalc = [&](Eigen::VectorXd const &Zuu, Eigen::VectorXd const &Zud) {
-    return (Zuu - Zud) / 2;
+auto ZIICalc = [&](std::vector<Eigen::VectorXd> const &Z) {
+    return (Z[2] - Z[3]) / 2;
 };
 
 // ------------------------------------------------------------------------------------------------------------
 
 // ZBQ
-auto ZQBCalc = [&](Eigen::VectorXd const &Zuu, Eigen::VectorXd const &Zss, Eigen::VectorXd const &Zus, Eigen::VectorXd const &Zud) {
-    return (Zuu - Zss - Zus + Zud) / 9;
+auto ZBQCalc = [&](std::vector<Eigen::VectorXd> const &Z) {
+    return (Z[2] - Z[5] - Z[4] + Z[3]) / 9;
 };
 
 // ------------------------------------------------------------------------------------------------------------
 
 // ZBS
-auto ZBSCalc = [&](Eigen::VectorXd const &Zss, Eigen::VectorXd const &Zus) {
-    return -(Zss + 2 * Zus) / 3;
+auto ZBSCalc = [&](std::vector<Eigen::VectorXd> const &Z) {
+    return -(Z[5] + 2 * Z[4]) / 3;
 };
 
 // ------------------------------------------------------------------------------------------------------------
 
 // ZQS
-auto ZQSCalc = [&](Eigen::VectorXd const &Zss, Eigen::VectorXd const &Zus) {
-    return (Zss - Zus) / 3;
+auto ZQSCalc = [&](std::vector<Eigen::VectorXd> const &Z) {
+    return (Z[5] - Z[4]) / 3;
 };
 
 // ------------------------------------------------------------------------------------------------------------
