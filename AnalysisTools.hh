@@ -161,21 +161,103 @@ auto ZQSCalc = [&](std::vector<Eigen::VectorXd> const &Z) {
 
 // ------------------------------------------------------------------------------------------------------------
 
-// general jackknife error calculator for susceptibilities
-auto ZError = [&](Eigen::VectorXd const &Z) {
-    // number of jackknife samples
-    int N = Z.size() - 2;
+// calculate variance (for jackknife samples)
+auto JCKVariance = [&](Eigen::VectorXd const &JCKSamples) {
+    // size of vector
+    int N = JCKSamples.size();
     // pre-factor
     double preFactor = (double)(N - 1) / N;
     // estimator / mean
-    double estimator = Z.segment(2, N).mean();
+    double estimator = JCKSamples.mean();
     // calculate variance
     double var = 0.;
     for (int i = 0; i < N; i++)
     {
-        double val = Z(i + 2) - estimator;
+        double val = JCKSamples(i) - estimator;
         var += val * val;
     }
-    // return error (square root of variance)
-    return std::sqrt(preFactor * var);
+    // return variance
+    return preFactor * var;
+};
+
+// ------------------------------------------------------------------------------------------------------------
+
+// general jackknife error calculator for susceptibilities
+auto ZError = [&](Eigen::VectorXd const &Z) {
+    return std::sqrt(JCKVariance(Z.segment(2, Z.size() - 2)));
+};
+
+// ------------------------------------------------------------------------------------------------------------
+
+// calculate original block means (and reducing their number by averaging) from jackknife samples
+auto JCKReducedBlocks = [&](Eigen::VectorXd const &JCKSamplesOld, int const &divisor) {
+    // number of samples
+    int const NOld = JCKSamplesOld.size();
+    // test if divisor is correct for the original sample number
+    if ((NOld % divisor) != 0.)
+    {
+        std::cout << "ERROR\nIncorrect divisor during Jackknife sample reduction." << std::endl;
+        std::exit(-1);
+    }
+    // empty vector for block values
+    Eigen::VectorXd blockVals(NOld);
+    // sum of (original) samples
+    double const sum = JCKSamplesOld.sum();
+    // calculate block values and add to vector
+    for (int i = 0; i < NOld; i++)
+    {
+        blockVals(i) = sum - (NOld - 1) * JCKSamplesOld(i);
+    }
+    // create new blocks
+    // old blocks to add up for new blocks
+    int const reduced = NOld / divisor;
+    // vector for new blocks (reduced)
+    Eigen::VectorXd newBlocks(divisor);
+    // calculate new blocks
+    for (int i = 0; i < divisor; i++)
+    {
+        newBlocks(i) = 0;
+        for (int j = 0; j < reduced; j++)
+        {
+            newBlocks(i) += blockVals(i * reduced + j);
+        }
+    }
+    // return new blocks
+    return newBlocks / reduced;
+};
+
+// ------------------------------------------------------------------------------------------------------------
+
+// calculate jackknife samples from block means
+auto JCKSamplesCalculation = [&](Eigen::VectorXd const &Blocks) {
+    // number of blocks
+    int const lengthBlocks = Blocks.size();
+    // vector for jackknife samples
+    Eigen::VectorXd Samples(lengthBlocks);
+    // copy data to std::vector
+    std::vector<double> tempVec(Blocks.data(), Blocks.data() + lengthBlocks);
+    // create jackknife samples
+    for (int i = 0; i < lengthBlocks; i++)
+    {
+        // copy data
+        std::vector<double> tempJCKVec = tempVec;
+        // delete ith element
+        tempJCKVec.erase(tempJCKVec.begin() + i);
+        // calculate mean
+        Samples[i] = std::accumulate(tempJCKVec.begin(), tempJCKVec.end(), 0.) / (lengthBlocks - 1);
+    }
+    // return new jackknife samples
+    return Samples;
+};
+
+// ------------------------------------------------------------------------------------------------------------
+
+// general jackknife error calculator for susceptibilities with sample number reductions (according to divisors)
+auto ZErrorJCKReduced = [&](Eigen::VectorXd const &Z, int const &divisor) {
+    // number of jackknife samples
+    int NOld = Z.size() - 2;
+    // get new jackknife samples via calculating old blocks and reducing their number by averaging
+    Eigen::VectorXd JCKSamples = JCKSamplesCalculation(JCKReducedBlocks(Z.segment(2, NOld), divisor));
+    // return jackknfife error
+    return std::sqrt(JCKVariance(JCKSamples));
 };

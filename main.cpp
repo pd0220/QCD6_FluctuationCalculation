@@ -95,34 +95,58 @@ int main(int argc, char **argv)
         // save results
         // imZB
         imZBVals(i) = imZB(0);
-        imZBErrs(i) = ZError(imZB);
         // imZQ
         imZQVals(i) = imZQ(0);
-        imZQErrs(i) = ZError(imZQ);
         // imZS
         imZSVals(i) = imZS(0);
-        imZSErrs(i) = ZError(imZS);
         // ZBB
         ZBBVals(i) = ZBB(0);
-        ZBBErrs(i) = ZError(ZBB);
         // ZQQ
         ZQQVals(i) = ZQQ(0);
-        ZQQErrs(i) = ZError(ZQQ);
         // ZSS
         ZSSVals(i) = ZSS(0);
-        ZSSErrs(i) = ZError(ZSS);
         // ZBQ
         ZBQVals(i) = ZBQ(0);
-        ZBQErrs(i) = ZError(ZBQ);
         // ZBS
         ZBSVals(i) = ZBS(0);
-        ZBSErrs(i) = ZError(ZBS);
         // ZQS
         ZQSVals(i) = ZQS(0);
-        ZQSErrs(i) = ZError(ZQS);
         // ZII
         ZIIVals(i) = ZII(0);
-        ZIIErrs(i) = ZError(ZII);
+
+        // decide error estimation method
+        // errors with jacknife sample number reduction OFF
+        if (argc < 6)
+        {
+            // errors
+            imZBErrs(i) = ZError(imZB);
+            imZQErrs(i) = ZError(imZQ);
+            imZSErrs(i) = ZError(imZS);
+            ZBBErrs(i) = ZError(ZBB);
+            ZQQErrs(i) = ZError(ZQQ);
+            ZSSErrs(i) = ZError(ZSS);
+            ZBQErrs(i) = ZError(ZBQ);
+            ZBSErrs(i) = ZError(ZBS);
+            ZQSErrs(i) = ZError(ZQS);
+            ZIIErrs(i) = ZError(ZII);
+        }
+        // errors with jacknife sample number reduction ON
+        else if (argc == 6)
+        {
+            // divisor (number of new samples)
+            int const divisor = std::atoi(argv[5]);
+            // errors
+            imZBErrs(i) = ZErrorJCKReduced(imZB, divisor);
+            imZQErrs(i) = ZErrorJCKReduced(imZQ, divisor);
+            imZSErrs(i) = ZErrorJCKReduced(imZS, divisor);
+            ZBBErrs(i) = ZErrorJCKReduced(ZBB, divisor);
+            ZQQErrs(i) = ZErrorJCKReduced(ZQQ, divisor);
+            ZSSErrs(i) = ZErrorJCKReduced(ZSS, divisor);
+            ZBQErrs(i) = ZErrorJCKReduced(ZBQ, divisor);
+            ZBSErrs(i) = ZErrorJCKReduced(ZBS, divisor);
+            ZQSErrs(i) = ZErrorJCKReduced(ZQS, divisor);
+            ZIIErrs(i) = ZErrorJCKReduced(ZII, divisor);
+        }
     }
 
     // write results to screen
