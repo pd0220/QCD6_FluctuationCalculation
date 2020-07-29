@@ -221,9 +221,10 @@ auto JCKReducedBlocks = [&](Eigen::VectorXd const &JCKSamplesOld, int const &div
         {
             newBlocks(i) += blockVals(i * reduced + j);
         }
+        newBlocks(i) /= reduced;
     }
     // return new blocks
-    return newBlocks / reduced;
+    return newBlocks;
 };
 
 // ------------------------------------------------------------------------------------------------------------
