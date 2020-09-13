@@ -92,77 +92,77 @@ Eigen::MatrixXd ReadFile(std::string const &fileName)
 //
 
 // imZB
-auto imZBCalc = [&](std::vector<Eigen::VectorXd> const &Z) {
+auto imZBCalc = [](std::vector<Eigen::VectorXd> const &Z) {
     return (2 * Z[0] + Z[1]) / 3;
 };
 
 // ------------------------------------------------------------------------------------------------------------
 
 // imZQ
-auto imZQCalc = [&](std::vector<Eigen::VectorXd> const &Z) {
+auto imZQCalc = [](std::vector<Eigen::VectorXd> const &Z) {
     return (Z[0] - Z[1]) / 3;
 };
 
 // ------------------------------------------------------------------------------------------------------------
 
 // imZS
-auto imZSCalc = [&](std::vector<Eigen::VectorXd> const &Z) {
+auto imZSCalc = [](std::vector<Eigen::VectorXd> const &Z) {
     return -Z[1];
 };
 
 // ------------------------------------------------------------------------------------------------------------
 
 // ZBB
-auto ZBBCalc = [&](std::vector<Eigen::VectorXd> const &Z) {
+auto ZBBCalc = [](std::vector<Eigen::VectorXd> const &Z) {
     return (2 * Z[2] + Z[5] + 4 * Z[4] + 2 * Z[3]) / 9;
 };
 
 // ------------------------------------------------------------------------------------------------------------
 
 // ZQQ
-auto ZQQCalc = [&](std::vector<Eigen::VectorXd> const &Z) {
+auto ZQQCalc = [](std::vector<Eigen::VectorXd> const &Z) {
     return (5 * Z[2] + Z[5] - 2 * Z[4] - 4 * Z[3]) / 9;
 };
 
 // ------------------------------------------------------------------------------------------------------------
 
 // ZSS
-auto ZSSCalc = [&](std::vector<Eigen::VectorXd> const &Z) {
+auto ZSSCalc = [](std::vector<Eigen::VectorXd> const &Z) {
     return Z[5];
 };
 
 // ------------------------------------------------------------------------------------------------------------
 
 // ZII
-auto ZIICalc = [&](std::vector<Eigen::VectorXd> const &Z) {
+auto ZIICalc = [](std::vector<Eigen::VectorXd> const &Z) {
     return (Z[2] - Z[3]) / 2;
 };
 
 // ------------------------------------------------------------------------------------------------------------
 
 // ZBQ
-auto ZBQCalc = [&](std::vector<Eigen::VectorXd> const &Z) {
+auto ZBQCalc = [](std::vector<Eigen::VectorXd> const &Z) {
     return (Z[2] - Z[5] - Z[4] + Z[3]) / 9;
 };
 
 // ------------------------------------------------------------------------------------------------------------
 
 // ZBS
-auto ZBSCalc = [&](std::vector<Eigen::VectorXd> const &Z) {
+auto ZBSCalc = [](std::vector<Eigen::VectorXd> const &Z) {
     return -(Z[5] + 2 * Z[4]) / 3;
 };
 
 // ------------------------------------------------------------------------------------------------------------
 
 // ZQS
-auto ZQSCalc = [&](std::vector<Eigen::VectorXd> const &Z) {
+auto ZQSCalc = [](std::vector<Eigen::VectorXd> const &Z) {
     return (Z[5] - Z[4]) / 3;
 };
 
 // ------------------------------------------------------------------------------------------------------------
 
 // calculate variance (for jackknife samples)
-auto JCKVariance = [&](Eigen::VectorXd const &JCKSamples) {
+auto JCKVariance = [](Eigen::VectorXd const &JCKSamples) {
     // size of vector
     int N = JCKSamples.size();
     // pre-factor
@@ -183,14 +183,14 @@ auto JCKVariance = [&](Eigen::VectorXd const &JCKSamples) {
 // ------------------------------------------------------------------------------------------------------------
 
 // general jackknife error calculator for susceptibilities
-auto ZError = [&](Eigen::VectorXd const &Z) {
+auto ZError = [](Eigen::VectorXd const &Z) {
     return std::sqrt(JCKVariance(Z.segment(2, Z.size() - 2)));
 };
 
 // ------------------------------------------------------------------------------------------------------------
 
 // calculate original block means (and reducing their number by averaging) from jackknife samples
-auto JCKReducedBlocks = [&](Eigen::VectorXd const &JCKSamplesOld, int const &divisor) {
+auto JCKReducedBlocks = [](Eigen::VectorXd const &JCKSamplesOld, int const &divisor) {
     // number of samples
     int const NOld = JCKSamplesOld.size();
     // test if divisor is correct for the original sample number
@@ -230,7 +230,7 @@ auto JCKReducedBlocks = [&](Eigen::VectorXd const &JCKSamplesOld, int const &div
 // ------------------------------------------------------------------------------------------------------------
 
 // calculate jackknife samples from block means
-auto JCKSamplesCalculation = [&](Eigen::VectorXd const &Blocks) {
+auto JCKSamplesCalculation = [](Eigen::VectorXd const &Blocks) {
     // number of blocks
     int const lengthBlocks = Blocks.size();
     // vector for jackknife samples
@@ -254,7 +254,7 @@ auto JCKSamplesCalculation = [&](Eigen::VectorXd const &Blocks) {
 // ------------------------------------------------------------------------------------------------------------
 
 // general jackknife error calculator for susceptibilities with sample number reductions (according to divisors)
-auto ZErrorJCKReduced = [&](Eigen::VectorXd const &Z, int const &divisor) {
+auto ZErrorJCKReduced = [](Eigen::VectorXd const &Z, int const &divisor) {
     // number of jackknife samples
     int NOld = Z.size() - 2;
     // get new jackknife samples via calculating old blocks and reducing their number by averaging

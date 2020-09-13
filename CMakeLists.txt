@@ -4,7 +4,7 @@ project(Fluctuations VERSION 0.1.0)
 include(CTest)
 enable_testing()
 
-find_package(Eigen3 REQUIRED)
+find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 MESSAGE( [Main] " EIGEN3_INCLUDE_DIRS = ${EIGEN3_INCLUDE_DIRS}") 
 #EIGEN3_INCLUDE_DIRS = /usr/include/eigen3
 
@@ -20,6 +20,7 @@ if (MSVC)
 endif (MSVC)
 
 add_executable(Fluctuations main.cpp)
+#target_link_libraries(Fluctuations Eigen3:Eigen)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17
                                                  CXX_STANDARD_REQUIRED ON
